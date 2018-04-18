@@ -74,7 +74,7 @@
                                                       <HBox alignment="CENTER" prefHeight="59.0" prefWidth="195.0" spacing="9.0">
                                                          <children>
                                                             <TextField fx:id="slitSeparationTextField" prefHeight="25.0" prefWidth="79.0" />
-                                                            <Button fx:id="slitSeparationOKButton" mnemonicParsing="false" text="OK" />
+                                                            <Button fx:id="slitSeparationOKButton" mnemonicParsing="false" onAction="#handleSlitSeparationButton" text="OK" />
                                                          </children>
                                                       </HBox>
                                                       <Slider fx:id="slitSeparationSlider" blockIncrement="1.0" majorTickUnit="1.0" max="10.0" minorTickCount="1" prefHeight="34.0" prefWidth="195.0" showTickLabels="true" showTickMarks="true" />
@@ -94,7 +94,7 @@
                                           <HBox alignment="CENTER" prefHeight="59.0" prefWidth="195.0" spacing="9.0">
                                              <children>
                                                 <TextField fx:id="wavelengthTextField" prefHeight="25.0" prefWidth="144.0" />
-                                                <Button fx:id="wavelengthOKButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="43.0" text="OK" />
+                                                <Button fx:id="wavelengthOKButton" mnemonicParsing="false" onAction="#handleWavelengthButton" prefHeight="25.0" prefWidth="43.0" text="OK" />
                                              </children>
                                           </HBox>
                                           <Slider fx:id="wavelengthSlider" majorTickUnit="50.0" max="700.0" min="400.0" minorTickCount="5" prefHeight="42.0" prefWidth="429.0" showTickLabels="true" showTickMarks="true" />
@@ -111,7 +111,7 @@
                                           <HBox alignment="CENTER" prefHeight="59.0" prefWidth="195.0" spacing="9.0">
                                              <children>
                                                 <TextField fx:id="slitWidthTextField" prefHeight="25.0" prefWidth="144.0" />
-                                                <Button fx:id="slitWidthOKButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="43.0" text="OK" />
+                                                <Button fx:id="slitWidthOKButton" mnemonicParsing="false" onAction="#handleSlitWidthButton" prefHeight="25.0" prefWidth="43.0" text="OK" />
                                              </children>
                                           </HBox>
                                           <Slider fx:id="slitWidthSlider" blockIncrement="1.0" majorTickUnit="0.2" max="3.0" min="0.5" minorTickCount="1" prefHeight="42.0" prefWidth="429.0" showTickLabels="true" showTickMarks="true" />
@@ -128,7 +128,7 @@
                                           <HBox alignment="CENTER" prefHeight="59.0" prefWidth="195.0" spacing="9.0">
                                              <children>
                                                 <TextField fx:id="distanceTextField" prefHeight="25.0" prefWidth="144.0" />
-                                                <Button fx:id="distanceOKButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="43.0" text="OK" />
+                                                <Button fx:id="distanceOKButton" mnemonicParsing="false" onAction="#handleDistanceButton" prefHeight="25.0" prefWidth="43.0" text="OK" />
                                              </children>
                                           </HBox>
                                           <Slider fx:id="distanceSlider" blockIncrement="50.0" majorTickUnit="50.0" max="1000.0" min="500.0" minorTickCount="5" prefHeight="42.0" prefWidth="429.0" showTickLabels="true" showTickMarks="true" />
