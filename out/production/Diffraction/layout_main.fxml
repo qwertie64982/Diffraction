@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
+<?import javafx.scene.chart.*?>
 <?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.canvas.*?>
-<?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
-<?import javafx.scene.chart.CategoryAxis?>
-<?import javafx.scene.chart.LineChart?>
-<?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -44,13 +43,27 @@
                                        <children>
                                           <HBox prefHeight="55.0" prefWidth="429.0">
                                              <children>
-                                                <VBox alignment="CENTER" prefHeight="200.0" prefWidth="211.0" spacing="9.0">
+                                                <VBox alignment="CENTER" prefHeight="200.0" prefWidth="211.0" spacing="4.0">
                                                    <children>
                                                       <Label prefHeight="26.0" prefWidth="66.0" text="Slit Type" textAlignment="CENTER">
                                                          <font>
                                                             <Font size="17.0" />
                                                          </font></Label>
-                                                      <ChoiceBox fx:id="slitTypeChoiceBox" prefHeight="25.0" prefWidth="155.0" />
+                                                      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="8.0">
+                                                         <children>
+                                                            <RadioButton fx:id="singleButton" mnemonicParsing="false" selected="true" text="Single Slit">
+                                                               <font>
+                                                                  <Font size="13.0" />
+                                                               </font>
+                                                               <toggleGroup>
+                                                                  <ToggleGroup fx:id="slitNumber" />
+                                                               </toggleGroup></RadioButton>
+                                                            <RadioButton fx:id="doubleButton" mnemonicParsing="false" text="Double Slit" toggleGroup="$slitNumber">
+                                                               <font>
+                                                                  <Font size="13.0" />
+                                                               </font></RadioButton>
+                                                         </children>
+                                                      </HBox>
                                                    </children>
                                                    <opaqueInsets>
                                                       <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
@@ -103,15 +116,15 @@
                                     <Separator prefHeight="16.0" prefWidth="417.0" />
                                     <VBox alignment="CENTER" prefHeight="81.0" prefWidth="429.0" spacing="9.0">
                                        <children>
-                                          <Label text="Slit Width (mm)">
-                                             <font>
-                                                <Font size="18.0" />
-                                             </font>
-                                          </Label>
                                           <HBox alignment="CENTER" prefHeight="59.0" prefWidth="195.0" spacing="9.0">
                                              <children>
                                                 <TextField fx:id="slitWidthTextField" prefHeight="25.0" prefWidth="144.0" />
                                                 <Button fx:id="slitWidthOKButton" mnemonicParsing="false" onAction="#handleSlitWidthButton" prefHeight="25.0" prefWidth="43.0" text="OK" />
+                                                <Label text="Slit Width (mm)">
+                                                   <font>
+                                                      <Font size="18.0" />
+                                                   </font>
+                                                </Label>
                                              </children>
                                           </HBox>
                                           <Slider fx:id="slitWidthSlider" blockIncrement="1.0" majorTickUnit="0.2" max="3.0" min="0.5" minorTickCount="1" prefHeight="42.0" prefWidth="429.0" showTickLabels="true" showTickMarks="true" />
@@ -131,7 +144,7 @@
                                                 <Button fx:id="distanceOKButton" mnemonicParsing="false" onAction="#handleDistanceButton" prefHeight="25.0" prefWidth="43.0" text="OK" />
                                              </children>
                                           </HBox>
-                                          <Slider fx:id="distanceSlider" blockIncrement="50.0" majorTickUnit="50.0" max="1000.0" min="500.0" minorTickCount="5" prefHeight="42.0" prefWidth="429.0" showTickLabels="true" showTickMarks="true" />
+                                          <Slider fx:id="distanceSlider" blockIncrement="50.0" majorTickUnit="50.0" max="1000.0" min="500.0" minorTickCount="5" prefHeight="38.0" prefWidth="207.0" showTickLabels="true" showTickMarks="true" />
                                        </children>
                                     </VBox>
                                     <Separator prefHeight="16.0" prefWidth="417.0" />
@@ -142,7 +155,7 @@
                                     </VBox>
                                  </children>
                               </VBox>
-                              <Separator orientation="VERTICAL" prefHeight="200.0" />
+                              <Separator orientation="VERTICAL" prefHeight="551.0" prefWidth="0.0" />
                               <VBox layoutX="235.0" layoutY="10.0" prefHeight="551.0" prefWidth="449.0">
                                  <children>
                                     <TabPane prefHeight="554.0" prefWidth="437.0" tabClosingPolicy="UNAVAILABLE">
@@ -151,14 +164,12 @@
                                              <content>
                                                 <AnchorPane maxHeight="900.0" maxWidth="9000.0" minHeight="0.0" minWidth="0.0" prefHeight="0.0" prefWidth="437.0">
                                                    <children>
-                                                      <LineChart layoutX="18.0" layoutY="25.0" prefHeight="288.0" prefWidth="401.0">
-                                                         <xAxis>
-                                                            <CategoryAxis side="BOTTOM" />
-                                                         </xAxis>
-                                                         <yAxis>
-                                                            <NumberAxis side="LEFT" />
-                                                         </yAxis>
-                                                      </LineChart>
+                                                      <VBox layoutX="-16.0" prefHeight="523.0" prefWidth="453.0">
+                                                         <children>
+                                                            <Pane fx:id="graph" prefHeight="200.0" prefWidth="200.0" />
+                                                            <Pane fx:id="intensityMap" prefHeight="200.0" prefWidth="200.0" />
+                                                            <Text fx:id="diffractionDifferenceText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+                                                         </children></VBox>
                                                    </children>
                                                 </AnchorPane>
                                              </content>
@@ -169,8 +180,8 @@
                                                    <children>
                                                       <VBox alignment="CENTER" layoutX="-3.0" layoutY="-3.0" prefHeight="525.0" prefWidth="441.0">
                                                          <children>
-                                                            <Canvas height="234.0" width="428.0" />
-                                                            <HBox prefHeight="245.0" prefWidth="441.0" />
+                                                            <Pane fx:id="apertureGraph" prefHeight="200.0" prefWidth="200.0" />
+                                                            <ImageView fx:id="imageView" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
                                                          </children>
                                                       </VBox>
                                                    </children>
