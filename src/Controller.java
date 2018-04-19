@@ -13,6 +13,11 @@ public class Controller {
     @FXML private TextField distanceTextField;
     @FXML private TextField slitSeparationTextField;
 
+    private double slitSeparation;
+    private Color color;
+    private double slitWidth;
+    private double distance;
+
     // TODO: Make it so when the user enters a number too big/small into the TextFields, they move the slider to the max/min values
 
     public Controller() {
@@ -20,23 +25,33 @@ public class Controller {
     }
 
     @FXML public void initialize() {
+        slitSeparationSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            double newSlitSeparation = slitSeparationSlider.getValue();
+            updateSlitSeparation(newSlitSeparation);
+        });
+
         wavelengthSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            double wavelength = wavelengthSlider.getValue();
-            updateColor(wavelengthToColor(wavelength));
+            double newWavelength = wavelengthSlider.getValue();
+            updateColor(wavelengthToColor(newWavelength));
         });
 
         slitWidthSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            double slitWidth = slitWidthSlider.getValue();
-            updateSlitWidth(slitWidth);
+            double newSlitWidth = slitWidthSlider.getValue();
+            updateSlitWidth(newSlitWidth);
+        });
+
+        distanceSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            double newDistance = distanceSlider.getValue();
+            updateDistance(newDistance);
         });
     }
 
     @FXML private void handleSlitSeparationButton() {
         try {
-            double slitSeparation = Double.parseDouble(slitSeparationTextField.getText());
-            if (slitSeparation >= 0 && slitSeparation <= 10) {
-                updateSlitSeparation(slitSeparation);
-                slitSeparationSlider.setValue(slitSeparation);
+            double newSlitSeparation = Double.parseDouble(slitSeparationTextField.getText());
+            if (newSlitSeparation >= 0 && newSlitSeparation <= 10) {
+                updateSlitSeparation(newSlitSeparation);
+                slitSeparationSlider.setValue(newSlitSeparation);
             }
         } catch (NumberFormatException e) {
             // Ignore
@@ -44,16 +59,18 @@ public class Controller {
     }
 
     private void updateSlitSeparation(double newSlitSeparation) {
-        // TODO: Update the UI with this new slit separation
-        // graph, gradients, etc
+        slitSeparation = newSlitSeparation;
+        updateGradient();
+        updateGraph();
+        updateImages();
     }
 
     @FXML private void handleWavelengthButton() {
         try {
-            double wavelength = Double.parseDouble(wavelengthTextField.getText());
-            if (wavelength >= 400 && wavelength <= 700) {
-                updateColor(wavelengthToColor(wavelength));
-                wavelengthSlider.setValue(wavelength);
+            double newWavelength = Double.parseDouble(wavelengthTextField.getText());
+            if (newWavelength >= 400 && newWavelength <= 700) {
+                updateColor(wavelengthToColor(newWavelength));
+                wavelengthSlider.setValue(newWavelength);
             }
         } catch (NumberFormatException e) {
             // Ignore
@@ -61,16 +78,18 @@ public class Controller {
     }
 
     private void updateColor(Color newColor) {
-        // TODO: Update the UI with this new color
-        // graph, gradients, etc
+        color = newColor;
+        updateGradient();
+        updateGraph();
+        updateImages();
     }
 
     @FXML private void handleSlitWidthButton() {
         try {
-            double slitWidth = Double.parseDouble(slitWidthTextField.getText());
-            if (slitWidth >= 0.5 && slitWidth <= 3) {
-                updateSlitWidth(slitWidth);
-                slitWidthSlider.setValue(slitWidth);
+            double newSlitWidth = Double.parseDouble(slitWidthTextField.getText());
+            if (newSlitWidth >= 0.5 && newSlitWidth <= 3) {
+                updateSlitWidth(newSlitWidth);
+                slitWidthSlider.setValue(newSlitWidth);
             }
         } catch (NumberFormatException e) {
             // Ignore
@@ -78,25 +97,29 @@ public class Controller {
     }
 
     private void updateSlitWidth(double newSlitWidth) {
-        // TODO: Update the UI with this new slit width
-        // graph, gradients, etc
+        slitWidth = newSlitWidth;
+        updateGradient();
+        updateGraph();
+        updateImages();
     }
 
     @FXML private void handleDistanceButton() {
         try {
-            double distance = Double.parseDouble(distanceTextField.getText());
-            if (distance >= 500 && distance <= 1000) {
-                updateDistance(distance);
-                distanceSlider.setValue(distance);
+            double newDistance = Double.parseDouble(distanceTextField.getText());
+            if (newDistance >= 500 && newDistance <= 1000) {
+                updateDistance(newDistance);
+                distanceSlider.setValue(newDistance);
             }
         } catch (NumberFormatException e) {
             // Ignore
         }
     }
 
-    private void updateDistance(double distance) {
-        // TODO: Update the UI with this new distance
-        // graph, gradients, etc
+    private void updateDistance(double newDistance) {
+        distance = newDistance;
+        updateGradient();
+        updateGraph();
+        updateImages();
     }
 
     private Color wavelengthToColor(double wavelength) {
@@ -137,5 +160,17 @@ public class Controller {
             opacity = 0;
         }
         return new Color(red, green, blue, opacity);
+    }
+
+    private void updateGradient() {
+        // TODO
+    }
+
+    private void updateGraph() {
+        // TODO
+    }
+
+    private void updateImages() {
+        // TODO
     }
 }
