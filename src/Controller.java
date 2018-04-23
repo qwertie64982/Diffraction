@@ -15,6 +15,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 public class Controller {
+    // Views
     @FXML private Slider wavelengthSlider;
     @FXML private Slider slitWidthSlider;
     @FXML private Slider distanceSlider;
@@ -31,18 +32,27 @@ public class Controller {
     @FXML private Pane intensityMap;
     @FXML private Pane apertureGraph;
 
+    // State of experiment
     private double slitSeparation;
     private double wavelength;
     private Color color;
     private double slitWidth;
     private double distance;
 
-    double[] outputValues;
-    double[] inputValues;
-    final int inputLength = 100;
+    // Calculations
+    private double[] outputValues;
+    private double[] inputValues;
+    private final int inputLength = 100;
 
-    // TODO: Make it so when the user enters a number too big/small into the TextFields, they move the slider to the max/min values
-    // TODO: Get rid of update methods for slit separation/wavelength/slit width/distance because they are only 2 lines
+    // Slider bounds
+    private final double MIN_SLIT_SEPARATION = 0;
+    private final double MAX_SLIT_SEPARATION = 10;
+    private final double MIN_WAVELENGTH = 400;
+    private final double MAX_WAVELENGTH = 700;
+    private final double MIN_SLIT_WIDTH = 0.5;
+    private final double MAX_SLIT_WIDTH = 3;
+    private final double MIN_DISTANCE = 500;
+    private final double MAX_DISTANCE = 1000;
 
     public Controller() {
         // nothing here for now
@@ -50,94 +60,113 @@ public class Controller {
 
     @FXML public void initialize() {
         slitSeparationSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            double newSlitSeparation = slitSeparationSlider.getValue();
-            updateSlitSeparation(newSlitSeparation);
+            slitSeparation = slitSeparationSlider.getValue();
+            updateUI();
         });
 
         wavelengthSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             double newWavelength = wavelengthSlider.getValue();
+            color = wavelengthToColor(newWavelength);
             wavelength = newWavelength;
-            updateColor(wavelengthToColor(newWavelength));
+            updateUI();
         });
 
         slitWidthSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            double newSlitWidth = slitWidthSlider.getValue();
-            updateSlitWidth(newSlitWidth);
+            slitWidth = slitWidthSlider.getValue();
+            updateUI();
         });
 
         distanceSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            double newDistance = distanceSlider.getValue();
-            updateDistance(newDistance);
+            distance = distanceSlider.getValue();
+            updateUI();
         });
     }
 
     @FXML private void handleSlitSeparationButton() {
         try {
             double newSlitSeparation = Double.parseDouble(slitSeparationTextField.getText());
-            if (newSlitSeparation >= 0 && newSlitSeparation <= 10) {
-                updateSlitSeparation(newSlitSeparation);
+            if (newSlitSeparation >= MIN_SLIT_SEPARATION && newSlitSeparation <= MAX_SLIT_SEPARATION) {
+                slitSeparation = newSlitSeparation;
                 slitSeparationSlider.setValue(newSlitSeparation);
+                updateUI();
+            } else if (newSlitSeparation < MIN_SLIT_SEPARATION) {
+                slitSeparation = MIN_SLIT_SEPARATION;
+                slitSeparationSlider.setValue(MIN_SLIT_SEPARATION);
+                updateUI();
+            } else { // newSlitSeparation > MAX_SLIT_SEPARATION
+                slitSeparation = MAX_SLIT_SEPARATION;
+                slitSeparationSlider.setValue(MAX_SLIT_SEPARATION);
+                updateUI();
             }
         } catch (NumberFormatException e) {
             // Ignore
         }
-    }
-
-    private void updateSlitSeparation(double newSlitSeparation) {
-        slitSeparation = newSlitSeparation;
-        updateUI();
     }
 
     @FXML private void handleWavelengthButton() {
         try {
             double newWavelength = Double.parseDouble(wavelengthTextField.getText());
-            if (newWavelength >= 400 && newWavelength <= 700) {
-                updateColor(wavelengthToColor(newWavelength));
+            if (newWavelength >= MIN_WAVELENGTH && newWavelength <= MAX_WAVELENGTH) {
+                color = wavelengthToColor(newWavelength);
                 wavelength = newWavelength;
                 wavelengthSlider.setValue(newWavelength);
+                updateUI();
+            } else if (newWavelength < MIN_WAVELENGTH) {
+                color = wavelengthToColor(MIN_WAVELENGTH);
+                wavelength = MIN_WAVELENGTH;
+                wavelengthSlider.setValue(MIN_WAVELENGTH);
+                updateUI();
+            } else { // newWavelength > MAX_WAVELENGTH
+                color = wavelengthToColor(MAX_WAVELENGTH);
+                wavelength = MAX_WAVELENGTH;
+                wavelengthSlider.setValue(MAX_WAVELENGTH);
+                updateUI();
             }
         } catch (NumberFormatException e) {
             // Ignore
         }
-    }
-
-    private void updateColor(Color newColor) {
-        color = newColor;
-        updateUI();
     }
 
     @FXML private void handleSlitWidthButton() {
         try {
             double newSlitWidth = Double.parseDouble(slitWidthTextField.getText());
-            if (newSlitWidth >= 0.5 && newSlitWidth <= 3) {
-                updateSlitWidth(newSlitWidth);
+            if (newSlitWidth >= MIN_SLIT_WIDTH && newSlitWidth <= MAX_SLIT_WIDTH) {
+                slitWidth = newSlitWidth;
                 slitWidthSlider.setValue(newSlitWidth);
+                updateUI();
+            } else if (newSlitWidth < MIN_SLIT_WIDTH) {
+                slitWidth = MIN_SLIT_WIDTH;
+                slitWidthSlider.setValue(MIN_SLIT_WIDTH);
+                updateUI();
+            } else { // newSlitWidth > MAX_SLIT_WIDTH
+                slitWidth = MAX_SLIT_WIDTH;
+                slitWidthSlider.setValue(MAX_SLIT_WIDTH);
+                updateUI();
             }
         } catch (NumberFormatException e) {
             // Ignore
         }
-    }
-
-    private void updateSlitWidth(double newSlitWidth) {
-        slitWidth = newSlitWidth;
-        updateUI();
     }
 
     @FXML private void handleDistanceButton() {
         try {
             double newDistance = Double.parseDouble(distanceTextField.getText());
-            if (newDistance >= 500 && newDistance <= 1000) {
-                updateDistance(newDistance);
+            if (newDistance >= MIN_DISTANCE && newDistance <= MAX_DISTANCE) {
+                distance = newDistance;
                 distanceSlider.setValue(newDistance);
+                updateUI();
+            } else if (newDistance < MIN_DISTANCE) {
+                distance = MIN_DISTANCE;
+                distanceSlider.setValue(MIN_DISTANCE);
+                updateUI();
+            } else { // newDistance > MAX_DISTANCE
+                distance = MAX_DISTANCE;
+                distanceSlider.setValue(MAX_DISTANCE);
+                updateUI();
             }
         } catch (NumberFormatException e) {
             // Ignore
         }
-    }
-
-    private void updateDistance(double newDistance) {
-        distance = newDistance;
-        updateUI();
     }
 
     private Color wavelengthToColor(double wavelength) {
