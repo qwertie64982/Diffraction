@@ -42,7 +42,7 @@ public class Controller {
     // Calculations
     private double[] outputValues;
     private double[] inputValues;
-    private final int inputLength = 100;
+    private final int inputLength = 101;     // May require some tinkering
 
     // Slider bounds
     private final double MIN_SLIT_SEPARATION = 0;
@@ -337,7 +337,7 @@ public class Controller {
     public void calculateOutput() {
         inputValues = new double[inputLength];
         for (int i = 0; i < inputLength; i++) {
-            inputValues[i] = 50 - i;              // this may need some timkering to get right
+            inputValues[i] = (i - 50.0) / 1250;              // this may need some tinkering to get right
         }
 
         outputValues = new double[inputValues.length];
@@ -367,6 +367,7 @@ public class Controller {
             double twoSlitVal = Math.cos((Math.PI * slitSeparation * xVal) / (wavelength * distance));
             val *= twoSlitVal * twoSlitVal;
         }
+        System.out.println(xVal + "     " + val);
         return  val;
     }
 
