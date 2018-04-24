@@ -1,9 +1,8 @@
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
-import javafx.scene.control.Button;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -31,6 +30,7 @@ public class Controller {
     @FXML private Pane graph;
     @FXML private Pane intensityMap;
     @FXML private Pane apertureGraph;
+    @FXML private ToggleGroup slitNumber;
 
     // State of experiment
     private double slitSeparation;
@@ -59,6 +59,15 @@ public class Controller {
     }
 
     @FXML public void initialize() {
+        slitSeparation = 0;
+        slitSeparationSlider.setValue(slitSeparation);
+        wavelength = 400;
+        wavelengthSlider.setValue(wavelength);
+        slitWidth = 0.5;
+        slitWidthSlider.setValue(slitWidth);
+        distance = 500;
+        distanceSlider.setValue(distance);
+
         slitSeparationSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             slitSeparation = slitSeparationSlider.getValue();
             updateUI();
@@ -80,6 +89,14 @@ public class Controller {
             distance = distanceSlider.getValue();
             updateUI();
         });
+
+        slitNumber.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            @Override
+            public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
+                updateUI();
+            }
+        });
+        updateUI();
     }
 
     @FXML private void handleSlitSeparationButton() {
@@ -280,21 +297,21 @@ public class Controller {
         Image image;
         if (basicColor == Color.BLUE) {
             if (singleButton.isSelected())
-                image = new Image("res/blueSingle.PNG");
+                image = new Image("file:res/blueSingle.PNG");
             else
-                image = new Image("res/blueDouble.PNG");
+                image = new Image("file:res/blueDouble.PNG");
         }
         else if (basicColor == Color.RED) {
             if (singleButton.isSelected())
-                image = new Image("res/redSingle.PNG");
+                image = new Image("file:res/redSingle.PNG");
             else
-                image = new Image("res/redDouble.PNG");
+                image = new Image("file:res/redDouble.PNG");
         }
         else {
             if (singleButton.isSelected())
-                image = new Image("res/greenSingle.PNG");
+                image = new Image("file:res/greenSingle.PNG");
             else
-                image = new Image("res/greenDouble.PNG");
+                image = new Image("file:res/greenDouble.PNG");
         }
         imageView.setImage(image);
 
