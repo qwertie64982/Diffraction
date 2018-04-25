@@ -1,10 +1,10 @@
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.chart.LineChart;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -31,6 +31,7 @@ public class Controller {
     @FXML private Pane intensityMap;
     @FXML private Pane apertureGraph;
     @FXML private ToggleGroup slitNumber;
+    @FXML private HBox hBox;
 
     // State of experiment
     private double slitSeparation;
@@ -42,7 +43,7 @@ public class Controller {
     // Calculations
     private double[] outputValues;
     private double[] inputValues;
-    private final int inputLength = 101;     // May require some tinkering
+    private final int INPUT_LENGTH = 1001;
 
     // Slider bounds
     private final double MIN_SLIT_SEPARATION = 0;
@@ -55,48 +56,44 @@ public class Controller {
     private final double MAX_DISTANCE = 1000;
 
     public Controller() {
-        // nothing here for now
+        slitSeparation = 0;
+        wavelength = 400;
+        slitWidth = 0.5;
+        distance = 500;
     }
 
     @FXML public void initialize() {
-        slitSeparation = 0;
+        // Set slider values
         slitSeparationSlider.setValue(slitSeparation);
-        wavelength = 400;
         wavelengthSlider.setValue(wavelength);
-        slitWidth = 0.5;
         slitWidthSlider.setValue(slitWidth);
-        distance = 500;
         distanceSlider.setValue(distance);
 
+        // GUI listeners
         slitSeparationSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             slitSeparation = slitSeparationSlider.getValue();
             updateUI();
         });
-
         wavelengthSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             double newWavelength = wavelengthSlider.getValue();
             color = wavelengthToColor(newWavelength);
             wavelength = newWavelength;
             updateUI();
         });
-
         slitWidthSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             slitWidth = slitWidthSlider.getValue();
             updateUI();
         });
-
         distanceSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             distance = distanceSlider.getValue();
             updateUI();
         });
-
         slitNumber.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
                 updateUI();
             }
         });
-        updateUI();
     }
 
     @FXML private void handleSlitSeparationButton() {
@@ -226,7 +223,7 @@ public class Controller {
         return new Color(red, green, blue, opacity);
     }
 
-    private void updateUI() {
+    public void updateUI() {
         // Clears old graphs before drawing graphs
         graph.getChildren().clear();
         intensityMap.getChildren().clear();
@@ -316,8 +313,8 @@ public class Controller {
         imageView.setImage(image);
 
         // Sets the distance between peaks to a label
-        NumberFormat formatter = new DecimalFormat("#.000000");
-        diffractionDifferenceText.setText("Diffraction Peak Distance: " + formatter.format(getFirstDiffractionDistance()));
+        NumberFormat formatter = new DecimalFormat("0.######");
+        diffractionDifferenceText.setText("Diffraction Peak Distance: " + formatter.format(getFirstDiffractionDistance()) + "cm");
     }
 
     public Color getBasicColor() {
@@ -335,9 +332,10 @@ public class Controller {
     }
 
     public void calculateOutput() {
-        inputValues = new double[inputLength];
-        for (int i = 0; i < inputLength; i++) {
-            inputValues[i] = (i - 50.0) / 1250;              // this may need some tinkering to get right
+        inputValues = new double[INPUT_LENGTH];
+        int halfInputLength = (INPUT_LENGTH - 1) / 2;
+        for (int i = 0; i < INPUT_LENGTH; i++) {
+            inputValues[i] = (i - halfInputLength) / (halfInputLength / 1.1); // +- 1.1
         }
 
         outputValues = new double[inputValues.length];
@@ -347,11 +345,11 @@ public class Controller {
     }
 
     public double[][] mapValues(double width, double height) {
-        double[][] mappedValues = new double[3][inputLength];
-        double xMax = inputLength / 1000.0;
+        double[][] mappedValues = new double[3][INPUT_LENGTH];
+        double xMax = INPUT_LENGTH / 1000.0;
         double xMin = -xMax;
 
-        for (int i = 0; i < inputLength; i++) {
+        for (int i = 0; i < INPUT_LENGTH; i++) {
             mappedValues[0][i] = ((inputValues[i] - xMin) * width) / (xMax-xMin);
             mappedValues[1][i] = height - (outputValues[i] * height);
             mappedValues[2][i] = outputValues[i] * 255;
@@ -360,23 +358,30 @@ public class Controller {
     }
 
     private double calculateIntensity(double xVal) {
-        double betaVal = (Math.PI * xVal * slitWidth) / (wavelength * distance);
+        double betaVal = (Math.PI * xVal * (slitWidth / 10)) / ((wavelength / 10000000) * distance);
         double val = (Math.sin(betaVal)) / betaVal; // Can't divide by 0: handled in next line
         val = (Double.isNaN(val)) ? 1 : val * val;
         if (doubleButton.isSelected()) {
-            double twoSlitVal = Math.cos((Math.PI * slitSeparation * xVal) / (wavelength * distance));
+            double twoSlitVal = Math.cos((Math.PI * (slitSeparation / 10) * xVal) / ((wavelength / 10000000) * distance));
             val *= twoSlitVal * twoSlitVal;
         }
-        System.out.println(xVal + "     " + val);
+//        System.out.println(xVal + "     " + val);              // DEBUG
         return  val;
     }
 
     private double getFirstDiffractionDistance() {
-//        double angle = wavelength / slitWidth;
         if (singleButton.isSelected()) {
-            return (1 * wavelength * distance) / slitWidth;
+            // distance to the first dark band
+            // wavelength nm -> cm, slit width mm -> cm
+            double darkDistance = (1 * (wavelength / 10000000) * distance) / (slitWidth / 10);
+            // multiply by 1.5 to get the light band between the first and second dark bands
+            return darkDistance * 1.5;
         } else {
-            return (1 * wavelength * distance) / slitSeparation;
+            // distance to the first dark band
+            // wavelength nm -> cm, slit separation mm -> cm
+            double darkDistance = (1 * (wavelength / 10000000) * distance) / (slitSeparation / 10);
+            // multiply by 1.5 to get the light band between the first and second dark bands
+            return darkDistance * 1.5;
         }
     }
 }
