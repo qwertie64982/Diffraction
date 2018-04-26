@@ -24,7 +24,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
+<HBox id="hBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
    <children>
       <TabPane prefHeight="600.0" prefWidth="956.0" tabClosingPolicy="UNAVAILABLE">
          <tabs>
@@ -133,7 +133,7 @@
                                     <Separator prefHeight="16.0" prefWidth="417.0" />
                                     <VBox alignment="CENTER" prefHeight="97.0" prefWidth="429.0" spacing="9.0">
                                        <children>
-                                          <Label text="Distance to Screen (mm)">
+                                          <Label text="Distance to Screen (cm)">
                                              <font>
                                                 <Font size="18.0" />
                                              </font>
@@ -164,7 +164,7 @@
                                              <content>
                                                 <AnchorPane maxHeight="900.0" maxWidth="9000.0" minHeight="0.0" minWidth="0.0" prefHeight="0.0" prefWidth="437.0">
                                                    <children>
-                                                      <VBox layoutX="-16.0" prefHeight="523.0" prefWidth="453.0">
+                                                      <VBox alignment="TOP_CENTER" layoutX="-16.0" prefHeight="523.0" prefWidth="453.0">
                                                          <children>
                                                             <Pane fx:id="graph" prefHeight="200.0" prefWidth="200.0" />
                                                             <Pane fx:id="intensityMap" prefHeight="200.0" prefWidth="200.0" />
@@ -202,12 +202,74 @@
             </Tab>
             <Tab text="Theory">
                <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <HBox alignment="CENTER" layoutY="-1.0" prefHeight="572.0" prefWidth="900.0">
+                           <children>
+                              <VBox alignment="CENTER" prefHeight="572.0" prefWidth="901.0">
+                                 <children>
+                                    <ScrollPane fitToHeight="true" fitToWidth="true" pannable="true" prefHeight="540.0" prefWidth="559.0">
+                                       <content>
+                                          <AnchorPane prefHeight="720.0" prefWidth="899.0">
+                                             <children>
+                                                <Label alignment="TOP_CENTER" layoutX="43.0" layoutY="54.0" lineSpacing="4.0" prefHeight="284.0" prefWidth="794.0" text="Diffraction is the slight bending of light as it passes around the edge of an object. &#10;The amount of bending depends on the relative size of the wavelength of light to &#10;the size of the opening. If the opening is much larger than the light's wavelength,&#10; the bending will be almost unnoticeable.&#10;When light passes through a single slit whose width (W) is on the order of the &#10;wavelength of the light, then we can observe a single slit diffraction pattern on a&#10;screen that is a distance (L) &gt;&gt; (W) away from the slit.  The intensity is a function of&#10; angle.  Huygens' principle tells us that each part of the slit can be thought of as an &#10;emitter of waves.  All these waves interfere to produce the diffraction pattern.  &#10;Where crest meets crest we have constructive interference and where crest meets &#10;trough we have destructive interference." textAlignment="CENTER">
+                                                   <font>
+                                                      <Font name="Times New Roman" size="18.0" />
+                                                   </font></Label>
+                                                <Label alignment="CENTER" layoutX="148.0" prefHeight="54.0" prefWidth="583.0" text="Single and Double Slit Diffraction" textAlignment="CENTER" underline="true">
+                                                   <font>
+                                                      <Font name="Times New Roman" size="21.0" />
+                                                   </font>
+                                                </Label>
+                                                <ImageView fitHeight="239.0" fitWidth="334.0" layoutX="94.0" layoutY="339.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@singleSlitDiagram.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <ImageView fitHeight="255.0" fitWidth="390.0" layoutX="443.0" layoutY="338.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@doubleSlitDiagram.gif" />
+                                                   </image>
+                                                </ImageView>
+                                                <Label alignment="TOP_CENTER" layoutX="153.0" layoutY="579.0" prefHeight="58.0" prefWidth="189.0" text="Example of a Single Slit Diffraction">
+                                                   <font>
+                                                      <Font name="Times New Roman Bold" size="12.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label alignment="TOP_CENTER" contentDisplay="CENTER" layoutX="544.0" layoutY="579.0" prefHeight="58.0" prefWidth="189.0" text="Example of a Double Slit Diffraction">
+                                                   <font>
+                                                      <Font name="Times New Roman Bold" size="12.0" />
+                                                   </font>
+                                                </Label>
+                                             </children></AnchorPane>
+                                       </content></ScrollPane>
+                                 </children></VBox>
+                           </children>
+                        </HBox>
+                     </children></AnchorPane>
                </content>
             </Tab>
             <Tab text="About">
                <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <Label alignment="TOP_CENTER" prefHeight="30.0" prefWidth="659.0" text="Single and Double Diffraction Experiment&#10;">
+                           <font>
+                              <Font name="Times New Roman Italic" size="35.0" />
+                           </font>
+                        </Label>
+                        <Label alignment="TOP_CENTER" layoutX="131.0" layoutY="182.0" prefHeight="237.0" prefWidth="659.0" text="&#10;&#10;Maxwell Sherman || Malik Al Ali || Daniel Cole&#10;&#10;CSCI2300: Object Oriented Software Design&#10;&#10;Spring 2018&#10;&#10;Saint Louis University - Madrid Campus" textAlignment="CENTER">
+                           <font>
+                              <Font name="Times New Roman Italic" size="19.0" />
+                           </font>
+                        </Label>
+                        <ImageView fitHeight="201.0" fitWidth="509.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@Logo.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </VBox>
                </content>
             </Tab>
          </tabs>

@@ -1,10 +1,16 @@
+/*
+ * Diffraction simulation
+ *
+ * Maxwell Sherman, Malik Al Ali, Daniel Cole
+ * Spring 2018, CSCI 2300-M01
+ */
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -13,6 +19,9 @@ import javafx.scene.text.Text;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
+/**
+ * Main controller class for Main.java
+ */
 public class Controller {
     // Views
     @FXML private Slider wavelengthSlider;
@@ -31,7 +40,6 @@ public class Controller {
     @FXML private Pane intensityMap;
     @FXML private Pane apertureGraph;
     @FXML private ToggleGroup slitNumber;
-    @FXML private HBox hBox;
 
     // State of experiment
     private double slitSeparation;
@@ -55,6 +63,9 @@ public class Controller {
     private final double MIN_DISTANCE = 500;
     private final double MAX_DISTANCE = 1000;
 
+    /**
+     * Main constructor (runs before window is loaded)
+     */
     public Controller() {
         slitSeparation = 0;
         wavelength = 400;
@@ -62,6 +73,9 @@ public class Controller {
         distance = 500;
     }
 
+    /**
+     * Initializer (runs once window is loaded but not shown)
+     */
     @FXML public void initialize() {
         // Set slider values
         slitSeparationSlider.setValue(slitSeparation);
@@ -96,6 +110,10 @@ public class Controller {
         });
     }
 
+    /**
+     * Runs when the slit separation OK button is pressed
+     * Sets the new slit separation and updates the UI
+     */
     @FXML private void handleSlitSeparationButton() {
         try {
             double newSlitSeparation = Double.parseDouble(slitSeparationTextField.getText());
@@ -117,6 +135,10 @@ public class Controller {
         }
     }
 
+    /**
+     * Runs when the wavelength OK button is pressed
+     * Sets the new wavelength/color and updates the UI
+     */
     @FXML private void handleWavelengthButton() {
         try {
             double newWavelength = Double.parseDouble(wavelengthTextField.getText());
@@ -141,6 +163,10 @@ public class Controller {
         }
     }
 
+    /**
+     * Runs when the slit width OK button is pressed
+     * Sets the new slit width and updates the UI
+     */
     @FXML private void handleSlitWidthButton() {
         try {
             double newSlitWidth = Double.parseDouble(slitWidthTextField.getText());
@@ -162,6 +188,10 @@ public class Controller {
         }
     }
 
+    /**
+     * Runs when the distance OK button is pressed
+     * Sets the new distance and updates the UI
+     */
     @FXML private void handleDistanceButton() {
         try {
             double newDistance = Double.parseDouble(distanceTextField.getText());
@@ -183,6 +213,11 @@ public class Controller {
         }
     }
 
+    /**
+     * Accurately converts wavelength of light to RGB
+     * @param wavelength wavelength (nm)
+     * @return Color object from wavelength
+     */
     private Color wavelengthToColor(double wavelength) {
         // Credit for algorithm: http://www.physics.sfasu.edu/astro/color/spectra.html
         // FORTRAN is an adventure
@@ -223,44 +258,48 @@ public class Controller {
         return new Color(red, green, blue, opacity);
     }
 
-    public void updateUI() {
+    /**
+     * Updates all the major UI (graph, gradient, and diagrams)
+     */
+    void updateUI() {
+        // Thanks to the "inspirational" code given to us, we were able to get similar-looking diagrams
+
         // Clears old graphs before drawing graphs
         graph.getChildren().clear();
         intensityMap.getChildren().clear();
         apertureGraph.getChildren().clear();
 
-        // Calculates outputs for graphs based on slider values
+        // Calculates outputs for graphs based on "state of experiment" variables
         calculateOutput();
 
-        // Array of mapped values - mappedValues[0] = x coordinates, mappedValues[1] = y coordinates, and mappedValues[2]=r,g,b values
+        // mappedValues[0] = x coordinates
+        // mappedValues[1] = y coordinates
+        // mappedValues[2] = RGB values
         double [][] mappedValues = mapValues(graph.widthProperty().get(), graph.heightProperty().get());
 
-        double lineWidth = intensityMap.widthProperty().get()/mappedValues[0].length;
+        double lineWidth = intensityMap.widthProperty().get() / mappedValues[0].length;
         double xPos = 0;
 
         Color basicColor = getBasicColor();
+        Color advancedColor = wavelengthToColor(wavelength);
 
         Line intensityLine;
         Line graphLine;
 
-        // Generates both the intensity map and the graph at through the same for loop
+        // Generates both the intensity map and the graph
         for (int i = 0; i < mappedValues[0].length - 1; i++) {
             intensityLine = new Line(xPos, intensityMap.getHeight(),xPos + lineWidth,0);
             graphLine = new Line(mappedValues[0][i], mappedValues[1][i], mappedValues[0][i + 1], mappedValues[1][i + 1]);
             graphLine.setStrokeWidth(1);
+            graphLine.setStroke(advancedColor);
 
+            // This is where it would be really complicated to use true color
             if (basicColor == Color.BLUE) {
                 intensityLine.setStroke(Color.rgb(0,0,((int) (mappedValues[2][i]))));
-                graphLine.setStroke(Color.BLUE);
             } else if (basicColor == Color.GREEN) {
                 intensityLine.setStroke(Color.rgb(0,((int) (mappedValues[2][i])),0));
-                graphLine.setStroke(Color.GREEN);
-            } else if (basicColor == Color.RED) {
-                intensityLine.setStroke(Color.rgb(((int) (mappedValues[2][i])), 0, 0));
-                graphLine.setStroke(Color.RED);
             } else {
-                intensityLine.setStroke(Color.BLACK);
-                graphLine.setStroke(Color.BLACK);
+                intensityLine.setStroke(Color.rgb(((int) (mappedValues[2][i])), 0, 0));
             }
             xPos += lineWidth;
             intensityMap.getChildren().add(intensityLine);
@@ -269,28 +308,28 @@ public class Controller {
         }
 
         // Sets up the aperture representation
-        double _middle = (apertureGraph.widthProperty().get() / 2.0); //Puts the line the in the middle of the screen
-        double _width = apertureGraph.widthProperty().get() / 30.0; //Arbitrary proportion of the pane
+        double _middle = (apertureGraph.widthProperty().get() / 2.0); // Puts the line the in the middle of the screen
+        double _width = apertureGraph.widthProperty().get() / 30.0; // Arbitrary proportion of the pane
         double _distance = apertureGraph.widthProperty().get() / 20.0;
 
-        if (singleButton.isSelected()) { //Generates aperture visualization
+        if (singleButton.isSelected()) { // Generates aperture visualization
             Line line = new Line(_middle,apertureGraph.heightProperty().get(),_middle,0);
-            line.setStroke(basicColor);
+            line.setStroke(advancedColor);
             line.setStrokeWidth(_width * slitWidth);
             apertureGraph.getChildren().add(line);
         } else {
             double distanceFromMiddle = _distance * slitSeparation / 2;
             Line line1 = new Line(_middle-distanceFromMiddle, apertureGraph.heightProperty().get(),_middle-distanceFromMiddle,0);
-            line1.setStroke(basicColor);
+            line1.setStroke(advancedColor);
             line1.setStrokeWidth(_width * slitWidth);
             Line line2 = new Line(_middle+distanceFromMiddle, apertureGraph.heightProperty().get(),_middle+distanceFromMiddle,0);
-            line2.setStroke(basicColor);
+            line2.setStroke(advancedColor);
             line2.setStrokeWidth(_width * slitWidth);
             apertureGraph.getChildren().addAll(line1, line2);
         }
 
-
-        // Set the Diffraction overhead image based on wavelength and slit amount
+        // Set the diffraction overhead image based on wavelength and slit amount
+        // This would also be difficult to achieve with true color
         Image image;
         if (basicColor == Color.BLUE) {
             if (singleButton.isSelected())
@@ -317,7 +356,12 @@ public class Controller {
         diffractionDifferenceText.setText("Diffraction Peak Distance: " + formatter.format(getFirstDiffractionDistance()) + "cm");
     }
 
-    public Color getBasicColor() {
+    /**
+     * Gets a basic version of the color for diagrams
+     * (Simplifies math a lot)
+     * @return approximation of color
+     */
+    private Color getBasicColor() {
         if (wavelength >= 400 && wavelength < 500) {
             return Color.BLUE;
         }
@@ -331,11 +375,16 @@ public class Controller {
         }
     }
 
-    public void calculateOutput() {
+    /**
+     * Finds the x and y coordinates for the graph/gradient
+     * x ranges from -1.1cm to 1.1cm on the graph
+     * y stays constant for ease of viewing
+     */
+    private void calculateOutput() {
         inputValues = new double[INPUT_LENGTH];
         int halfInputLength = (INPUT_LENGTH - 1) / 2;
         for (int i = 0; i < INPUT_LENGTH; i++) {
-            inputValues[i] = (i - halfInputLength) / (halfInputLength / 1.1); // +- 1.1
+            inputValues[i] = (i - halfInputLength) / (halfInputLength / 1.1); // +- 1.1 cm
         }
 
         outputValues = new double[inputValues.length];
@@ -344,24 +393,37 @@ public class Controller {
         }
     }
 
-    public double[][] mapValues(double width, double height) {
+    /**
+     * Assembles all the coordinates into one 2D array
+     * @param width width of pane
+     * @param height height of pane
+     * @return all coordinates in one array
+     */
+    private double[][] mapValues(double width, double height) {
         double[][] mappedValues = new double[3][INPUT_LENGTH];
         double xMax = INPUT_LENGTH / 1000.0;
         double xMin = -xMax;
 
         for (int i = 0; i < INPUT_LENGTH; i++) {
-            mappedValues[0][i] = ((inputValues[i] - xMin) * width) / (xMax-xMin);
-            mappedValues[1][i] = height - (outputValues[i] * height);
-            mappedValues[2][i] = outputValues[i] * 255;
+            mappedValues[0][i] = ((inputValues[i] - xMin) * width) / (xMax-xMin); // x-coordinates
+            mappedValues[1][i] = height - (outputValues[i] * height);             // y-coordinates
+            mappedValues[2][i] = outputValues[i] * 255;                           // RGB values
         }
         return  mappedValues;
     }
 
+    /**
+     * Finds the intensity of each x-coordinate
+     * @param xVal x value
+     * @return intensity
+     */
     private double calculateIntensity(double xVal) {
+        // slit width mm -> cm, wavelength nm -> cm
         double betaVal = (Math.PI * xVal * (slitWidth / 10)) / ((wavelength / 10000000) * distance);
-        double val = (Math.sin(betaVal)) / betaVal; // Can't divide by 0: handled in next line
+        double val = (Math.sin(betaVal)) / betaVal; // Can't divide by 0 - handled in next line
         val = (Double.isNaN(val)) ? 1 : val * val;
         if (doubleButton.isSelected()) {
+            // slit separation mm -> cm, wavelength nm -> cm
             double twoSlitVal = Math.cos((Math.PI * (slitSeparation / 10) * xVal) / ((wavelength / 10000000) * distance));
             val *= twoSlitVal * twoSlitVal;
         }
@@ -369,6 +431,10 @@ public class Controller {
         return  val;
     }
 
+    /**
+     * Finds the distance to the first peak (m = 1)
+     * @return distance in cm
+     */
     private double getFirstDiffractionDistance() {
         if (singleButton.isSelected()) {
             // distance to the first dark band
