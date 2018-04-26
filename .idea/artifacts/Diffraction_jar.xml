@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Diffraction:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Diffraction_jar</output-path>
+    <root id="archive" name="Diffraction.jar">
+      <element id="module-output" name="Diffraction" />
+    </root>
+  </artifact>
+</component>
