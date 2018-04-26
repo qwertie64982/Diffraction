@@ -7,6 +7,7 @@
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -16,6 +17,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 
+import javax.imageio.ImageIO;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
@@ -331,25 +334,27 @@ public class Controller {
         // Set the diffraction overhead image based on wavelength and slit amount
         // This would also be difficult to achieve with true color
         Image image;
-        if (basicColor == Color.BLUE) {
-            if (singleButton.isSelected())
-                image = new Image("file:res/blueSingle.PNG");
-            else
-                image = new Image("file:res/blueDouble.PNG");
+        try {
+            if (basicColor == Color.BLUE) {
+                if (singleButton.isSelected())
+                    image = SwingFXUtils.toFXImage(ImageIO.read(getClass().getClassLoader().getResource("blueSingle.PNG")), null);
+                else
+                    image = SwingFXUtils.toFXImage(ImageIO.read(getClass().getClassLoader().getResource("blueDouble.PNG")), null);
+            } else if (basicColor == Color.RED) {
+                if (singleButton.isSelected())
+                    image = SwingFXUtils.toFXImage(ImageIO.read(getClass().getClassLoader().getResource("redSingle.PNG")), null);
+                else
+                    image = SwingFXUtils.toFXImage(ImageIO.read(getClass().getClassLoader().getResource("redDouble.PNG")), null);
+            } else {
+                if (singleButton.isSelected())
+                    image = SwingFXUtils.toFXImage(ImageIO.read(getClass().getClassLoader().getResource("greenSingle.PNG")), null);
+                else
+                    image = SwingFXUtils.toFXImage(ImageIO.read(getClass().getClassLoader().getResource("greenDouble.PNG")), null);
+            }
+            imageView.setImage(image);
+        } catch (IOException | NullPointerException e) {
+            e.printStackTrace();
         }
-        else if (basicColor == Color.RED) {
-            if (singleButton.isSelected())
-                image = new Image("file:res/redSingle.PNG");
-            else
-                image = new Image("file:res/redDouble.PNG");
-        }
-        else {
-            if (singleButton.isSelected())
-                image = new Image("file:res/greenSingle.PNG");
-            else
-                image = new Image("file:res/greenDouble.PNG");
-        }
-        imageView.setImage(image);
 
         // Sets the distance between peaks to a label
         NumberFormat formatter = new DecimalFormat("0.######");
